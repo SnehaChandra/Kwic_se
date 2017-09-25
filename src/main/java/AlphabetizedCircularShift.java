@@ -10,24 +10,16 @@ public class AlphabetizedCircularShift implements IAlphabetizedCircularShift {
     private static List<String> sorted_lines = new ArrayList();
 
     public AlphabetizedCircularShift(List<String> pLines) {
-        lines = pLines;
+        lines.addAll(pLines);
     }
 
     @Override
     public void generateAlphabetizedCircularShift(){
+        Collections.sort(lines);
 
-        if(sorted_lines.isEmpty()) {
-
-            Collections.sort(lines);
-            sorted_lines.addAll(lines);
-        }
-        else
-        {
-            sorted_lines = merge(sorted_lines,lines);
-        }
     }
 
-    private List<String> merge(List<String> sorted, List<String> new_sorted) {
+ /**   private List<String> merge(List<String> sorted, List<String> new_sorted) {
         List<String> whole_sorted = new ArrayList<>();
         int sortedIndex = 0;
         int nSortedIndex = 0;
@@ -59,7 +51,7 @@ public class AlphabetizedCircularShift implements IAlphabetizedCircularShift {
             wholeIndex++;
         }
         return whole_sorted;
-    }
+    }**/
     @Override
     public List<String> getLines() {
         return lines;
