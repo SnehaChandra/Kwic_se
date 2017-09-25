@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KWIC</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+</head>
+<body style="">
+<a style="margin-right:380px;margin-top:30px;float:right" href="userManual.pdf">Help</a>
+<h1 text-align="centre">Key Word In Context</h1>
+
+
+    <div class="container">
+        <form style="margin-top: 2%;" id="form">
+            <label for="sentence">INPUT</label>
+            <div class="form-row">
+                <div class="col-10">
+                    <textarea style="color: green;text-transform:uppercase;" type="text" rows="10" cols="80" class="form-control" id="sentence" placeholder="Please enter your sentence here."></textarea>
+                </div>
+            </div>
+            </br>
+            <label for="cs">CIRCULAR SHIFTS</label>
+            <div class="form-row">
+                <div class="col-10">
+                    <textarea style="color: crimson;" type="text" rows="10" cols="80" class="form-control" id="cs"></textarea>
+                </div>
+            </div>
+            </br>
+            <label for="acs">ALPHABETISED CIRCULAR SHIFTS</label>
+            <div class="form-row">
+                <div class="col-10">
+                    <textarea type="text" style="color: blue" rows="10" cols="80" class="form-control" id="acs"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+
+     $(this).on('keyup','#form',function (e) {
+            if (!$.trim($("#sentence").val())) {
+                $("#cs").html("");
+                $("#acs").html("");
+                e.preventDefault();
+                var reset_url = "/api/reset";
+                $.getJSON( reset_url, function( data ) {
+                    success= true;
+                }) ;
+            }
+        });
+        $(this).on('keypress','#form',function(e){
+            if((e.type === 'keypress' && e.keyCode === 13) || e.type === 'click')
+            {
+                var sentence= $("#sentence").val();
+                var split_sentence= sentence.split("\n").map(function(item) {
+                    return item.trim();
+                });
+                var len= split_sentence.length;
+
+                if (split_sentence[len - 1]) {
+                    ajaxfunction(split_sentence[len - 1]);
+                }
+            }
+        });
+
+        function ajaxfunction(pSentence){
+
+            var submit_url = "/api/rotate?sentence="+pSentence;
+            $.getJSON( submit_url, function( data ) {
+                var formatted_str = $.map($.makeArray(data),function(val){
+                    return "-"+val +'\n';
+                });
+                $("#cs").append(formatted_str);
+                 $("#cs").append("\n");
+
+                var alpha_url="/api/sort";
+                $.getJSON(alpha_url,function(data){
+                    var formatted_alpha_str = $.map($.makeArray(data),function(val){ return "-"+val +'\n';});
+                    $("#acs").html(formatted_alpha_str);
+                })
+
+            }) ;
+
+        }
+    });
+</script>
+</body>
+</html>
